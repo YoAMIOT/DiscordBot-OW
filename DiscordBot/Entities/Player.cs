@@ -11,7 +11,6 @@ namespace DiscordBot.Entities{
     internal class Player{
         public string battleTag;
         public int gamesPlayed;
-        public float timePlayed;
         public float winRate;
         public float kda;
 
@@ -23,7 +22,6 @@ namespace DiscordBot.Entities{
             string generalStats = GeneralSplit[1].Substring(0, GeneralSplit[1].Length - 2) + "}";
             dynamic dyn = JsonConvert.DeserializeObject(generalStats);
             gamesPlayed = dyn.games_played;
-            timePlayed = dyn.time_played;
             winRate = dyn.winrate;
             kda = dyn.kda;
 
@@ -35,8 +33,7 @@ namespace DiscordBot.Entities{
         }
 
         public string ToString(){
-            return (battleTag + ": gamesPlayed: " + gamesPlayed + ", timePlayed: " +
-                timePlayed + ", winrate: " + winRate + "%, kda: " + kda);
+            return (battleTag + ": gamesPlayed: " + gamesPlayed + ", winrate: " + winRate + "%, kda: " + kda);
         }
     }
 }
