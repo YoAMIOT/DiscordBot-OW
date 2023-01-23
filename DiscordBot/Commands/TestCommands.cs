@@ -15,5 +15,15 @@ namespace DiscordBot.Commands{
                 await ctx.Channel.SendMessageAsync("Pong").ConfigureAwait(false);
             }
         }
+
+        [Command("OwQuery")]
+        [Description("Get the datas of a player by entering it's BattleTag")]
+        public async Task OwQuery(CommandContext ctx,[Description("Player Battletag")] string battleTag){
+            if (ctx.Channel.Id == 1066452105981870121){
+                OverwatchCrud owCrud = new OverwatchCrud();
+                string response = await owCrud.getDatasFromBattleTag(battleTag);
+                await ctx.Channel.SendMessageAsync(response).ConfigureAwait(false);
+            }
+        }
     }
 }
