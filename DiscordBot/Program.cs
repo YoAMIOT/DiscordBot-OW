@@ -1,6 +1,8 @@
 ﻿using System;
+using DiscordBot.Entities;
 
-namespace DiscordBot{
+namespace DiscordBot
+{
     class Program{
         static void Main(string[] args){
             Bot bot = new Bot();
