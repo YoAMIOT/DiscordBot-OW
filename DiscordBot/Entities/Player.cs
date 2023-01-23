@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace DiscordBot.Entities{
         public int gamesPlayed;
         public float winRate;
         public float kda;
+        public Array HeroList;
 
         public void SetDatas(string json){
             //Split the results into 2 json strings
@@ -27,9 +29,12 @@ namespace DiscordBot.Entities{
 
 
             Stats = Stats[1].Split("\"heroes\":");
-            string HeroesStats = "{\"heroes\":" + Stats[1];
-            //TO-DO HEROES RESUME
-
+            string heroesStats = "{\"heroes\":" + Stats[1];
+            dyn = JsonConvert.DeserializeObject(heroesStats);
+            foreach(var h in dyn.heroes){
+                dynamic hero = h;
+                //TO-DO Instanciate a Hero object and populate it, then put it in the HeroList and sort them
+            }
         }
 
         public string ToString(){
