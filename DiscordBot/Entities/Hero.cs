@@ -9,5 +9,11 @@ namespace DiscordBot.Entities{
         public string name;
         public int timePlayed;
         public float winRate;
+        public string role;
+
+        public override string ToString()
+        {
+            return (name + ", " + timePlayed + ", " + winRate + ", " + role);
+        }
     }
 }
