@@ -38,7 +38,7 @@ namespace DiscordBot.Commands
                 player.battleTag = battleTag;
                 if (response != "{}"){
                     player.SetDatas(response);
-                    await ctx.Channel.SendMessageAsync(player.ToString()).ConfigureAwait(false);
+                    await ctx.Channel.SendMessageAsync(player.CreateStringForDiscordMsg()).ConfigureAwait(false);
                 } else {
                     await ctx.Channel.SendMessageAsync(player.battleTag + " has a private profile.").ConfigureAwait(false);
                 }

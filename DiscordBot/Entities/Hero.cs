@@ -11,8 +11,7 @@ namespace DiscordBot.Entities{
         public float winRate;
         public string role;
 
-        public override string ToString()
-        {
+        public override string ToString(){
             return (name + ", " + timePlayed + ", " + winRate + ", " + role);
         }
     }

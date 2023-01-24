@@ -35,6 +35,7 @@ namespace DiscordBot.Entities{
             string heroesStats = "{\"heroes\":" + Stats[1];
             //Gets the heroes datas
             dyn = JsonConvert.DeserializeObject(heroesStats);
+            //Get the datas of all the played heroes and sort them
             Dictionary<string,Hero> DmgDictionary = new Dictionary<string,Hero>(){{"ashe", new Hero()}, {"bastion", new Hero()}, {"cassidy", new Hero()}, {"echo", new Hero()}, {"genji", new Hero()}, {"hanzo", new Hero()}, {"junkrat", new Hero()}, {"mei", new Hero()}, {"pharah", new Hero()}, {"reaper", new Hero()}, {"soldier-76", new Hero()}, {"sombra", new Hero()}, {"sojourn", new Hero()}, {"symmetra", new Hero()}, {"torbjorn", new Hero()}, {"tracer", new Hero()}, {"widowmaker", new Hero()}};
             Dictionary<string,Hero> TankDictionary = new Dictionary<string,Hero>(){{"dva", new Hero()}, {"doomfist", new Hero()}, {"junker-queen", new Hero()}, {"orisa", new Hero()}, {"ramattra", new Hero()}, {"reinhardt", new Hero()}, {"roadhog", new Hero()}, {"sigma", new Hero()}, {"winston", new Hero()}, {"wrecking-ball", new Hero()}, {"zarya", new Hero()}};
             Dictionary<string,Hero> SuppDictionary = new Dictionary<string,Hero>(){{"ana", new Hero()}, {"baptiste", new Hero()}, {"brigitte", new Hero()}, {"kiriko", new Hero()}, {"lucio", new Hero()}, {"mercy", new Hero()}, {"moira", new Hero()}, {"zenyatta", new Hero()}};
@@ -44,6 +45,7 @@ namespace DiscordBot.Entities{
                 hero.name = h.Name;
                 foreach (var g in h)
                 {
+                    //Converting the time played from seconds to hours
                     hero.timePlayed = (float)g.time_played / 3600;
                     hero.timePlayed = (float)System.Math.Round(hero.timePlayed, 2);
                     hero.winRate = g.winrate;
@@ -68,19 +70,19 @@ namespace DiscordBot.Entities{
             }
 
             //Get the 2 best characters in each roles and put them into the BestHeroesList
-            BestHeroesList[0] = GetBestHeroInDictionnary(DmgDictionary);
-            DmgDictionary.Remove(BestHeroesList[0].name);
-            BestHeroesList[1] = GetBestHeroInDictionnary(DmgDictionary);
-            BestHeroesList[2] = GetBestHeroInDictionnary(TankDictionary);
-            TankDictionary.Remove(BestHeroesList[2].name);
-            BestHeroesList[3] = GetBestHeroInDictionnary(TankDictionary);
+            BestHeroesList[0] = GetBestHeroInDictionnary(TankDictionary);
+            TankDictionary.Remove(BestHeroesList[0].name);
+            BestHeroesList[1] = GetBestHeroInDictionnary(TankDictionary);
+            BestHeroesList[2] = GetBestHeroInDictionnary(DmgDictionary);
+            DmgDictionary.Remove(BestHeroesList[2].name);
+            BestHeroesList[3] = GetBestHeroInDictionnary(DmgDictionary);
             BestHeroesList[4] = GetBestHeroInDictionnary(SuppDictionary);
             SuppDictionary.Remove(BestHeroesList[4].name);
             BestHeroesList[5] = GetBestHeroInDictionnary(SuppDictionary);
         }
 
         public string ToString(){
-            return (battleTag + ": gamesPlayed: " + gamesPlayed + ", winrate: " + winRate + "%, kda: " + kda);
+            return ("gamesPlayed: " + gamesPlayed + ", winrate: " + winRate + "%, kda: " + kda);
         }
         
         private Hero GetBestHeroInDictionnary(Dictionary<string, Hero> Dict){
@@ -91,6 +93,18 @@ namespace DiscordBot.Entities{
                 }
             }
             return bestHero;
+        }
+
+        public string CreateStringForDiscordMsg(){
+            string str = this.battleTag + ":\nGames played: __**" + gamesPlayed + "**__, Win: __**" + winRate + "%**__, KDA: __**" + kda + "**__\n";
+
+            string heroesString = "";
+            foreach (var hero in this.BestHeroesList){
+                heroesString += "\n" + hero.name.ToUpper() + ": Time: __**" + hero.timePlayed + "hrs**__ Win: __**" + hero.winRate + "%**__";
+            }
+            str = str + heroesString;
+
+            return str;
         }
     }
 }
