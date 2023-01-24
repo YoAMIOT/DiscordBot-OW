@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace DiscordBot.Entities{
     internal class Player{
@@ -33,46 +35,62 @@ namespace DiscordBot.Entities{
             string heroesStats = "{\"heroes\":" + Stats[1];
             //Gets the heroes datas
             dyn = JsonConvert.DeserializeObject(heroesStats);
-            Dictionary<string,Hero> DmgDictionnary = new Dictionary<string,Hero>(){{"ashe", new Hero()}, {"bastion", new Hero()}, {"cassidy", new Hero()}, {"echo", new Hero()}, {"genji", new Hero()}, {"hanzo", new Hero()}, {"junkrat", new Hero()}, {"mei", new Hero()}, {"pharah", new Hero()}, {"reaper", new Hero()}, {"soldier-76", new Hero()}, {"sombra", new Hero()}, {"sojourn", new Hero()}, {"symmetra", new Hero()}, {"torbjorn", new Hero()}, {"tracer", new Hero()}, {"widowmaker", new Hero()}};
-            Dictionary<string,Hero> TankDictionnary = new Dictionary<string,Hero>(){{"dva", new Hero()}, {"doomfist", new Hero()}, {"junker-queen", new Hero()}, {"orisa", new Hero()}, {"ramattra", new Hero()}, {"reinhardt", new Hero()}, {"roadhog", new Hero()}, {"sigma", new Hero()}, {"winston", new Hero()}, {"wrecking-ball", new Hero()}, {"zarya", new Hero()}};
-            Dictionary<string,Hero> SuppDictionnary = new Dictionary<string,Hero>(){{"ana", new Hero()}, {"baptiste", new Hero()}, {"brigitte", new Hero()}, {"kiriko", new Hero()}, {"lucio", new Hero()}, {"mercy", new Hero()}, {"moira", new Hero()}, {"zenyatta", new Hero()}};
-            foreach (var h in dyn.heroes){
+            Dictionary<string,Hero> DmgDictionary = new Dictionary<string,Hero>(){{"ashe", new Hero()}, {"bastion", new Hero()}, {"cassidy", new Hero()}, {"echo", new Hero()}, {"genji", new Hero()}, {"hanzo", new Hero()}, {"junkrat", new Hero()}, {"mei", new Hero()}, {"pharah", new Hero()}, {"reaper", new Hero()}, {"soldier-76", new Hero()}, {"sombra", new Hero()}, {"sojourn", new Hero()}, {"symmetra", new Hero()}, {"torbjorn", new Hero()}, {"tracer", new Hero()}, {"widowmaker", new Hero()}};
+            Dictionary<string,Hero> TankDictionary = new Dictionary<string,Hero>(){{"dva", new Hero()}, {"doomfist", new Hero()}, {"junker-queen", new Hero()}, {"orisa", new Hero()}, {"ramattra", new Hero()}, {"reinhardt", new Hero()}, {"roadhog", new Hero()}, {"sigma", new Hero()}, {"winston", new Hero()}, {"wrecking-ball", new Hero()}, {"zarya", new Hero()}};
+            Dictionary<string,Hero> SuppDictionary = new Dictionary<string,Hero>(){{"ana", new Hero()}, {"baptiste", new Hero()}, {"brigitte", new Hero()}, {"kiriko", new Hero()}, {"lucio", new Hero()}, {"mercy", new Hero()}, {"moira", new Hero()}, {"zenyatta", new Hero()}};
+            foreach (var h in dyn.heroes)
+            {
                 Hero hero = new Hero();
                 hero.name = h.Name;
-                foreach (var g in h){
-                    hero.timePlayed = g.time_played / 3600;
+                foreach (var g in h)
+                {
+                    hero.timePlayed = (float)g.time_played / 3600;
+                    hero.timePlayed = (float)System.Math.Round(hero.timePlayed, 2);
                     hero.winRate = g.winrate;
                 }
 
                 //Sorting heroes by role
-                if (DmgDictionnary.ContainsKey(hero.name)){
+                if (DmgDictionary.ContainsKey(hero.name))
+                {
                     hero.role = "dmg";
-                    DmgDictionnary[hero.name] = hero;
+                    DmgDictionary[hero.name] = hero;
                 }
-                else if (TankDictionnary.ContainsKey(hero.name)){
+                else if (TankDictionary.ContainsKey(hero.name))
+                {
                     hero.role = "tank";
-                    TankDictionnary[hero.name] = hero;
+                    TankDictionary[hero.name] = hero;
                 }
-                else if (SuppDictionnary.ContainsKey(hero.name)){
+                else if (SuppDictionary.ContainsKey(hero.name))
+                {
                     hero.role = "supp";
-                    SuppDictionnary[hero.name] = hero;
-                }
-
-                foreach(var dmg in DmgDictionnary){
-                    //Get the two most played DMG and put it in the Best Hero list
-                }
-                foreach(var tank in TankDictionnary){
-                    //Get the two most played DMG and put it in the Best Hero list
-                }
-                foreach(var supp in SuppDictionnary){
-                    //Get the two most played DMG and put it in the Best Hero list
+                    SuppDictionary[hero.name] = hero;
                 }
             }
-            Console.WriteLine(SuppDictionnary.ToString() + TankDictionnary.ToString() + DmgDictionnary.ToString());
+
+            //Get the 2 best characters in each roles and put them into the BestHeroesList
+            BestHeroesList[0] = GetBestHeroInDictionnary(DmgDictionary);
+            DmgDictionary.Remove(BestHeroesList[0].name);
+            BestHeroesList[1] = GetBestHeroInDictionnary(DmgDictionary);
+            BestHeroesList[2] = GetBestHeroInDictionnary(TankDictionary);
+            TankDictionary.Remove(BestHeroesList[2].name);
+            BestHeroesList[3] = GetBestHeroInDictionnary(TankDictionary);
+            BestHeroesList[4] = GetBestHeroInDictionnary(SuppDictionary);
+            SuppDictionary.Remove(BestHeroesList[4].name);
+            BestHeroesList[5] = GetBestHeroInDictionnary(SuppDictionary);
         }
 
         public string ToString(){
             return (battleTag + ": gamesPlayed: " + gamesPlayed + ", winrate: " + winRate + "%, kda: " + kda);
+        }
+        
+        private Hero GetBestHeroInDictionnary(Dictionary<string, Hero> Dict){
+            Hero bestHero = new Hero();
+            foreach (var hero in Dict.Keys){
+                if (Dict[hero].timePlayed > bestHero.timePlayed){
+                    bestHero = Dict[hero];
+                }
+            }
+            return bestHero;
         }
     }
 }
